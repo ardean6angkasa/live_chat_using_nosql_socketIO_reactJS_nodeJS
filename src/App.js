@@ -45,11 +45,6 @@ function App() {
   const [messages, setMessages] = useState([]);
   const [menuItems, setMenuItems] = useState([]);
 
-  // const captionInput = document.getElementById("captionInput");
-  // const charCount = document.getElementById("charCount");
-  // const captionInputRef = useRef(null);
-  // const charCountRef = useRef(null);
-
   const [selectedUser, setSelectedUser] = useState(null);
   const [reply_id, setSelectedUserId] = useState(null);
   const [filteredMessages, setFilteredMessages] = useState([]);
@@ -112,7 +107,7 @@ function App() {
   const handleUserClick = (retrieve_username, senderId) => {
     setSelectedUser(retrieve_username);
     setSelectedUserId(senderId);
-
+    setMessage("");
     axios.post("http://localhost:3008/api/resetUnreadMessages", {
       username: retrieve_username,
       agentname: user_sender,
@@ -140,9 +135,7 @@ function App() {
       menuItem.username.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const [messageLength, setMessageLength] = useState("");
   const maxLength = 2200;
-
   const handleChange = (e) => {
     const value = e.target.value;
     if (value.length <= maxLength) {
