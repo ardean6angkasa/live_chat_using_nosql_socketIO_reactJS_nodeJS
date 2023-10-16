@@ -1,0 +1,25 @@
+install:
+node.js v16
+
+npx create-react-app live-chat
+cd live-chat:
+npm install socket.io-client
+npm install axios
+npm install express socket.io mongoose
+npm install cors
+npm install crypto-js
+npm install body-parser
+npm install node-notifier
+
+npm install socket.io-client --legacy-peer-deps
+npm install --legacy-peer-deps
+npm install --force
+
+
+1. start server: node socketIO.js
+2. start react app: npm start
+
+to build: npm run build
+and then:
+npm install -g serve
+serve -s build
