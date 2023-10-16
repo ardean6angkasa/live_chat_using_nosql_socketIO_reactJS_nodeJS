@@ -261,7 +261,8 @@ function App() {
                     </button>
                   </form>
                   <div className="char-count">
-                    {message.length}/{maxLength}
+                    {message.length.toLocaleString()}/
+                    {maxLength.toLocaleString()}
                   </div>
                 </div>
               )}
