@@ -189,15 +189,23 @@ app.get("/api/unreadMessages", (req, res) => {
 app.post("/api/resetUnreadMessages", async (req, res) => {
   const { username, agentname } = req.body;
   try {
-    const agent = await Unread.findOne({ username: agentname });
+    const agent = await Unread.findOne({
+      username,
+      agentname,
+    });
     if (agent) {
       await Unread.updateOne(
-        { username: username, agentname: agentname },
+        { username, agentname },
         { selected_user: "selected", unreadMessages: 0 }
       );
 
       await Unread.updateMany(
-        { agentname: agentname, _id: { $ne: agent._id } },
+        { agentname, _id: { $ne: agent._id } },
+        { selected_user: "not selected" }
+      );
+    } else {
+      await Unread.updateMany(
+        { agentname, username: { $ne: username } },
         { selected_user: "not selected" }
       );
     }
