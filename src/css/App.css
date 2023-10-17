@@ -171,6 +171,25 @@
   left: -18px;
 }
 
+.trash-icon {
+  width: 16px;
+  height: 16px;
+  top: 0;
+  left: -18px;
+}
+
+.trash-button {
+  padding: 4px 8px;
+  background-color: #666;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.trash-button:hover {
+  background-color: #333;
+}
+
 .search-bar-user {
   width: 80%;
   border: none;

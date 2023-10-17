@@ -9,7 +9,7 @@ const Notification = ({ message, onClose }) => {
     const timer = setTimeout(() => {
       setIsVisible(false);
       onClose();
-    }, 40);
+    }, 60);
 
     return () => clearTimeout(timer);
   }, [onClose]);

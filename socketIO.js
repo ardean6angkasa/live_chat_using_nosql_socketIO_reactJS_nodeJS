@@ -28,6 +28,7 @@ const chatSchema = new mongoose.Schema(
     sender_id: String,
     reply_id: String,
     message: String,
+    delete_chat: String,
     timestamp: { type: Date, default: Date.now },
   },
   { versionKey: false }
@@ -59,12 +60,46 @@ app.use(bodyParser.json());
 
 io.on("connection", (socket) => {
   socket.on("delete chat", async (data) => {
-    const { reply_id } = data;
+    const { reply_id, sender_id } = data;
     try {
-      await Promise.all([
-        Chat.deleteMany({ sender_id: reply_id }),
-        Chat.deleteMany({ reply_id: reply_id }),
-      ]);
+      const delete_msg_sender = await Chat.find({
+        sender_id: sender_id,
+        reply_id: reply_id,
+      });
+      const delete_msg_reply = await Chat.find({
+        sender_id: reply_id,
+        reply_id: sender_id,
+      });
+      if (delete_msg_sender.length !== 0) {
+        for (const message of delete_msg_sender) {
+          if (!message.delete_chat) {
+            await Chat.updateMany(
+              { reply_id: reply_id, sender_id: sender_id },
+              { delete_chat: sender_id }
+            );
+            if (delete_msg_reply.length !== 0) {
+              await Chat.updateMany(
+                { sender_id: reply_id, reply_id: sender_id },
+                { delete_chat: sender_id }
+              );
+            } else {
+              await Chat.deleteMany({
+                reply_id: reply_id,
+                sender_id: sender_id,
+              });
+            }
+          } else if (message.delete_chat === sender_id) {
+            socket.emit("deleteResponse", { success: false });
+          } else {
+            await Promise.all([
+              Chat.deleteMany({ sender_id: reply_id, reply_id: sender_id }),
+              Chat.deleteMany({ reply_id: reply_id, sender_id: sender_id }),
+            ]);
+          }
+        }
+      } else {
+        socket.emit("deleteResponse", { success: false });
+      }
     } catch (error) {
       console.error(error);
     }
@@ -103,8 +138,6 @@ io.on("connection", (socket) => {
   });
 });
 
-app.use(express.static("live-chat/build"));
-
 app.get("/api/chat", (req, res) => {
   Chat.find({})
     .then((chats) => {
@@ -129,7 +162,6 @@ app.get("/api/agents", (req, res) => {
 
 app.post("/api/login", (req, res) => {
   const { username, password } = req.body;
-
   Agent.findOne({ username })
     .then((agent) => {
       if (agent) {
@@ -194,15 +226,16 @@ app.post("/api/resetUnreadMessages", async (req, res) => {
       agentname,
     });
     if (agent) {
-      await Unread.updateOne(
-        { username, agentname },
-        { selected_user: "selected", unreadMessages: 0 }
-      );
-
-      await Unread.updateMany(
-        { agentname, _id: { $ne: agent._id } },
-        { selected_user: "not selected" }
-      );
+      await Promise.all([
+        Unread.updateOne(
+          { username, agentname },
+          { selected_user: "selected", unreadMessages: 0 }
+        ),
+        Unread.updateMany(
+          { agentname, _id: { $ne: agent._id } },
+          { selected_user: "not selected" }
+        ),
+      ]);
     } else {
       await Unread.updateMany(
         { agentname, username: { $ne: username } },
@@ -215,6 +248,7 @@ app.post("/api/resetUnreadMessages", async (req, res) => {
   }
 });
 
+app.use(express.static("live-chat/build"));
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "/build/index.html"));
   res.write("Socket.io is running");

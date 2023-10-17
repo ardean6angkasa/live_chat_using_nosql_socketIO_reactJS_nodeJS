@@ -6,10 +6,29 @@ import "./css/App.css";
 import paperplanelogo from "./assets/paperplane-svgrepo-com.svg";
 import greencirclelogo from "./assets/green-circle-svgrepo-com.svg";
 import logoutsketch from "./assets/logout-sketch-svgrepo-com.svg";
+import trashcan from "./assets/delete-svgrepo-com.svg";
 import CustomModal from "./CustomModal";
+import Notification from "./Notification";
+
 const socket = io("http://localhost:3008");
 
 function App() {
+  const [notifications, setNotifications] = useState([]);
+
+  const handleNotification = (message) => {
+    const newNotification = {
+      id: Date.now(),
+      message,
+    };
+    setNotifications([...notifications, newNotification]);
+  };
+
+  socket.on("deleteResponse", (data) => {
+    if (data.success === false) {
+      handleNotification("There is nothing to delete.");
+    }
+  });
+
   const [message, setMessage] = useState("");
 
   const handleLogin = (success, senderId, sender) => {
@@ -35,6 +54,27 @@ function App() {
 
   const handleCancel = () => {
     closeModal();
+  };
+
+  const [showModalDelete, setShowModalDelete] = useState(false);
+  const openModalDelete = () => {
+    setShowModalDelete(true);
+  };
+  const closeModalDelete = () => {
+    setShowModalDelete(false);
+  };
+
+  const handleSureDelete = (user_sender_id, reply_id) => {
+    socket.emit("delete chat", {
+      sender_id: user_sender_id,
+      reply_id: reply_id,
+    });
+    setfinishConvConfirmed(true);
+    closeModalDelete();
+  };
+
+  const handleCancelDelete = () => {
+    closeModalDelete();
   };
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -89,7 +129,8 @@ function App() {
       messages.filter(
         (msg) =>
           (msg.reply_id == reply_id || msg.reply_id == user_sender_id) &&
-          (msg.sender == selectedUser || msg.sender == user_sender)
+          (msg.sender == selectedUser || msg.sender == user_sender) &&
+          user_sender_id != msg.delete_chat
       )
     );
 
@@ -198,6 +239,13 @@ function App() {
                           />{" "}
                         </>
                       )}
+                    <button onClick={openModalDelete} className="trash-button">
+                      <img
+                        src={trashcan}
+                        alt="delete message"
+                        className="trash-icon"
+                      />
+                    </button>{" "}
                     {menuItem.username}{" "}
                     {unreadMessages[`${menuItem.username}-${user_sender}`] &&
                     unreadMessages[`${menuItem.username}-${user_sender}`]
@@ -217,7 +265,13 @@ function App() {
                 </button>
               ))}
             </div>
-
+            <CustomModal
+              show={showModalDelete}
+              onClose={closeModalDelete}
+              title="Delete this chat?"
+              onSure={() => handleSureDelete(user_sender_id, reply_id)}
+              onCancel={handleCancelDelete}
+            />
             <div className="chat-room">
               <ul className="message-list">
                 {selectedUser ? (
@@ -279,6 +333,18 @@ function App() {
           }}
         />
       )}
+
+      {notifications.map((notification) => (
+        <Notification
+          key={notification.id}
+          message={notification.message}
+          onClose={() => {
+            setNotifications(
+              notifications.filter((n) => n.id !== notification.id)
+            );
+          }}
+        />
+      ))}
     </div>
   );
 }
