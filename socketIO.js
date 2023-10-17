@@ -116,12 +116,25 @@ io.on("connection", (socket) => {
         username: sender,
         agentname: selectedUser,
       });
+      const existingUser = await Unread.findOne({
+        username: selectedUser,
+        agentname: sender,
+      });
       if (existingAgent) {
         if (existingAgent.selected_user !== "selected") {
           await Unread.updateOne(
             { username: sender, agentname: selectedUser },
             { $inc: { unreadMessages: 1 } }
           );
+          if (!existingUser) {
+            const unread = new Unread({
+              username: selectedUser,
+              agentname: sender,
+              unreadMessages: 0,
+              selected_user: "selected",
+            });
+            await unread.save();
+          }
         }
       } else {
         const unread = new Unread({

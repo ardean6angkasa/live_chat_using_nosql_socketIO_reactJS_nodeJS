@@ -9,7 +9,7 @@ const Notification = ({ message, onClose }) => {
     const timer = setTimeout(() => {
       setIsVisible(false);
       onClose();
-    }, 60);
+    }, 600);
 
     return () => clearTimeout(timer);
   }, [onClose]);
@@ -17,13 +17,13 @@ const Notification = ({ message, onClose }) => {
   return isVisible ? (
     <div className={"notification"}>
       {message}
-      <button className="close-button" onClick={() => setIsVisible(false)}>
+      <span className="close-button" onClick={() => setIsVisible(false)}>
         <img
           src={close_option}
           alt="Close"
           style={{ width: "24px", height: "24px" }}
         />
-      </button>
+      </span>
     </div>
   ) : null;
 };

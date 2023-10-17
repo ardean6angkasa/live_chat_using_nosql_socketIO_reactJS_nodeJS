@@ -229,23 +229,27 @@ function App() {
                 >
                   <span className="menu-item-text">
                     {unreadMessages[`${menuItem.username}-${user_sender}`] &&
-                      unreadMessages[`${menuItem.username}-${user_sender}`]
-                        .unreadMessages > 0 && (
-                        <>
-                          <img
-                            src={greencirclelogo}
-                            alt="Unread Message"
-                            className="notification-icon"
-                          />{" "}
-                        </>
-                      )}
-                    <button onClick={openModalDelete} className="trash-button">
-                      <img
-                        src={trashcan}
-                        alt="delete message"
-                        className="trash-icon"
-                      />
-                    </button>{" "}
+                    unreadMessages[`${menuItem.username}-${user_sender}`]
+                      .unreadMessages > 0 ? (
+                      <>
+                        <img
+                          src={greencirclelogo}
+                          alt="Unread Message"
+                          className="notification-icon"
+                        />
+                      </>
+                    ) : (
+                      <button
+                        onClick={openModalDelete}
+                        className="trash-button"
+                      >
+                        <img
+                          src={trashcan}
+                          alt="delete message"
+                          className="trash-icon"
+                        />
+                      </button>
+                    )}{" "}
                     {menuItem.username}{" "}
                     {unreadMessages[`${menuItem.username}-${user_sender}`] &&
                     unreadMessages[`${menuItem.username}-${user_sender}`]
