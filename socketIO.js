@@ -78,15 +78,14 @@ io.on("connection", (socket) => {
               { delete_chat: sender_id }
             );
             if (delete_msg_reply.length !== 0) {
-              await Chat.updateMany(
-                { sender_id: reply_id, reply_id: sender_id },
-                { delete_chat: sender_id }
-              );
-            } else {
-              await Chat.deleteMany({
-                reply_id: reply_id,
-                sender_id: sender_id,
-              });
+              for (const message_reply of delete_msg_reply) {
+                if (!message_reply.delete_chat) {
+                  await Chat.updateMany(
+                    { sender_id: reply_id, reply_id: sender_id },
+                    { delete_chat: sender_id }
+                  );
+                }
+              }
             }
           } else if (message.delete_chat === sender_id) {
             socket.emit("deleteResponse", { success: false });
@@ -95,6 +94,17 @@ io.on("connection", (socket) => {
               Chat.deleteMany({ sender_id: reply_id, reply_id: sender_id }),
               Chat.deleteMany({ reply_id: reply_id, sender_id: sender_id }),
             ]);
+          }
+        }
+      } else if (delete_msg_reply.length !== 0) {
+        for (const message_reply of delete_msg_reply) {
+          if (!message_reply.delete_chat) {
+            await Chat.updateMany(
+              { sender_id: reply_id, reply_id: sender_id },
+              { delete_chat: sender_id }
+            );
+          } else if (message_reply.delete_chat === sender_id) {
+            socket.emit("deleteResponse", { success: false });
           }
         }
       } else {

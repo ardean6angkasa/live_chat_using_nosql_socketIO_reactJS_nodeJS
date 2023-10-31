@@ -128,9 +128,9 @@ function App() {
     setFilteredMessages(
       messages.filter(
         (msg) =>
-          (msg.reply_id == reply_id || msg.reply_id == user_sender_id) &&
-          (msg.sender == selectedUser || msg.sender == user_sender) &&
-          user_sender_id != msg.delete_chat
+          (msg.reply_id === reply_id || msg.reply_id === user_sender_id) &&
+          (msg.sender === selectedUser || msg.sender === user_sender) &&
+          user_sender_id !== msg.delete_chat
       )
     );
 
@@ -143,7 +143,14 @@ function App() {
     return () => {
       socket.off("chat message");
     };
-  }, [selectedUser, user_sender, reply_id, user_sender_id, messages]);
+  }, [
+    selectedUser,
+    user_sender,
+    reply_id,
+    user_sender_id,
+    messages,
+    finishConvConfirmed,
+  ]);
 
   const handleUserClick = (retrieve_username, senderId) => {
     setSelectedUser(retrieve_username);

@@ -15,7 +15,7 @@ const LoginPage = ({ onLogin, userLoggedIn }) => {
         sender: user_sender,
       });
     }
-  }, [userLoggedIn]);
+  }, [userLoggedIn, onLogin]);
 
   const [showModal, setShowModal] = useState(false);
   const openModal = () => {
@@ -47,7 +47,7 @@ const LoginPage = ({ onLogin, userLoggedIn }) => {
       return;
     }
 
-    const sensitiveCharacters = /[!@#$%^&*()+{}\[\]:;<>,.?~\\]/;
+    const sensitiveCharacters = /[!@#$%^&*()+{}[\]:;<>,.?~\\]/;
     if (sensitiveCharacters.test(create_username)) {
       handleNotification("Username can't contain sensitive characters.");
       return;
