@@ -3,7 +3,7 @@ live chat app using, react.js for the frontend, node.js v16 &amp; socket.io for 
 
 ![image](https://github.com/reza7angkasa/live_chat_using_nosql_socketIO_reactJS_nodeJS/assets/72240159/fe863623-0781-41ad-ba7a-e6de6e72b228)
 
-![image](https://github.com/reza7angkasa/live_chat_using_nosql_socketIO_reactJS_nodeJS/assets/72240159/d831a19c-6a4f-41f1-89e1-4329712fd83c)
+![image](https://github.com/reza7angkasa/live_chat_using_nosql_socketIO_reactJS_nodeJS/assets/72240159/b71cfc71-f5f4-4161-9f1f-23402b7ee539)
 
 ![image](https://github.com/reza7angkasa/live_chat_using_nosql_socketIO_reactJS_nodeJS/assets/72240159/adbdb282-11f3-4431-8677-7b65c7e5fed2)
 
