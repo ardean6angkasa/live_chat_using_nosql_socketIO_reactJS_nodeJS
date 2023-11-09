@@ -1,6 +1,15 @@
 # live_chat_using_nosql_socketIO_reactJS_nodeJS
 live chat app using, react.js for the frontend, node.js v16 &amp; socket.io for the backend. for its database using nosql (mongodb).
 
+to use, first run the socket.io, `node socketIO.js`, then run the app, `npm start`.
+
+to build the application for production:
+- npm run build
+- npm install -g serve
+- cd build (navigate to project's build directory)
+- serve -s
+
+
 ![image](https://github.com/reza7angkasa/live_chat_using_nosql_socketIO_reactJS_nodeJS/assets/72240159/fe863623-0781-41ad-ba7a-e6de6e72b228)
 
 ![image](https://github.com/reza7angkasa/live_chat_using_nosql_socketIO_reactJS_nodeJS/assets/72240159/b71cfc71-f5f4-4161-9f1f-23402b7ee539)
